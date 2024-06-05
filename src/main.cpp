@@ -8,17 +8,38 @@ static int query_user_for_device();
 static void log_devices(int n_devices);
 static void check_error(PaError err);
 
-constexpr int sample_rate = 44100;
-constexpr unsigned long buffer_size = 512;
+constexpr int default_sample_rate = 44100;
+constexpr unsigned long default_buffer_size = 512;
 
-static int input_callback(const void* input_buffer,
-                          void* output_buffer,
-                          unsigned long buffer_size,
-                          const PaStreamCallbackTimeInfo* time_info,
-                          PaStreamCallbackFlags status_flags,
-                          void* user_data)
+struct StreamConfig
 {
-}
+    static StreamConfig default_config()
+    {
+        StreamConfig cfg;
+        cfg.sample_rate = default_sample_rate;
+        cfg.buffer_size = default_buffer_size;
+        return cfg;
+    }
+    int sample_rate;
+    unsigned long buffer_size;
+};
+
+class Stream
+{
+   public:
+    StreamConfig cfg;
+    int start();
+    int pause();
+    int close();
+    static int callback(const void* input_buffer,
+                        void* output_buffer,
+                        unsigned long buffer_size,
+                        const PaStreamCallbackTimeInfo* time_info,
+                        PaStreamCallbackFlags status_flags,
+                        void* user_data)
+    {
+    }
+};
 
 int main(void)
 {
@@ -28,6 +49,8 @@ int main(void)
 
     int device = query_user_for_device();
     std::cout << "you chose " << device << "\n";
+
+    StreamConfig stream_config = StreamConfig::default_config();
 
     PaStreamParameters input_params;
     PaStreamParameters output_params;
@@ -48,21 +71,25 @@ int main(void)
     output_params.suggestedLatency =
         Pa_GetDeviceInfo(device)->defaultLowOutputLatency;
 
-    PaStream* stream;
-    err = Pa_OpenStream(&stream, &input_params, &output_params, sample_rate,
-                        buffer_size, paNoFlag, input_callback, NULL);
+    Stream stream;
+    stream.cfg = stream_config;
+
+    PaStream* pa_stream;
+    err = Pa_OpenStream(&pa_stream, &input_params, &output_params,
+                        stream.cfg.sample_rate, stream.cfg.buffer_size,
+                        paNoFlag, stream.callback, NULL);
     check_error(err);
 
-    err = Pa_StartStream(stream);
+    err = Pa_StartStream(pa_stream);
     check_error(err);
 
     int capture_time_secs = 5;
     Pa_Sleep(capture_time_secs * 1000);
 
-    err = Pa_StopStream(stream);
+    err = Pa_StopStream(pa_stream);
     check_error(err);
 
-    err = Pa_CloseStream(stream);
+    err = Pa_CloseStream(pa_stream);
     check_error(err);
     err = Pa_Terminate();
     check_error(err);
