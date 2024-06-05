@@ -5,12 +5,12 @@
 
 static void check_error(PaError err);
 
-int Stream::callback(const void* input_buffer,
-                     void* output_buffer,
-                     unsigned long buffer_size,
-                     const PaStreamCallbackTimeInfo* time_info,
-                     PaStreamCallbackFlags status_flags,
-                     void* user_data)
+int do_nothing_callback(const void* input_buffer,
+                        void* output_buffer,
+                        unsigned long buffer_size,
+                        const PaStreamCallbackTimeInfo* time_info,
+                        PaStreamCallbackFlags status_flags,
+                        void* user_data)
 {
     (void)input_buffer;
     (void)output_buffer;
@@ -25,6 +25,7 @@ Stream::Stream()
 {
     check_error(Pa_Initialize());
     cfg = StreamConfig::default_config();
+    callback = do_nothing_callback;
     query_input_device();
     query_output_device();
     setup_params();

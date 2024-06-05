@@ -17,12 +17,12 @@ class Stream
     void start();
     void stop();
 
-    static int callback(const void* input_buffer,
-                        void* output_buffer,
-                        unsigned long buffer_size,
-                        const PaStreamCallbackTimeInfo* time_info,
-                        PaStreamCallbackFlags status_flags,
-                        void* user_data);
+    int (*callback)(const void* input_buffer,
+                    void* output_buffer,
+                    unsigned long buffer_size,
+                    const PaStreamCallbackTimeInfo* time_info,
+                    PaStreamCallbackFlags status_flags,
+                    void* user_data);
 
     StreamConfig cfg;
 
