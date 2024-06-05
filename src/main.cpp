@@ -30,6 +30,7 @@ class Stream
     int start();
     int pause();
     int close();
+
     static int callback(const void* input_buffer,
                         void* output_buffer,
                         unsigned long buffer_size,
@@ -41,6 +42,10 @@ class Stream
     }
 
     StreamConfig cfg;
+
+   private:
+    void query_input_device();
+    void query_output_device();
     int n_input_channels;
     int n_output_channels;
     int input_device;
