@@ -20,7 +20,7 @@ int main(void)
     else if (n_devices == 0)
     {
         std::cout << "No audio device found\n";
-        exit(EXIT_FAILURE);
+        exit(EXIT_SUCCESS);
     }
 
     err = Pa_Terminate();
