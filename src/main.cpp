@@ -27,6 +27,7 @@ struct StreamConfig
 class Stream
 {
    public:
+    Stream();
     int start();
     int pause();
     int close();
@@ -38,6 +39,12 @@ class Stream
                         PaStreamCallbackFlags status_flags,
                         void* user_data)
     {
+        (void)input_buffer;
+        (void)output_buffer;
+        (void)buffer_size;
+        (void)time_info;
+        (void)status_flags;
+        (void)user_data;
         return 0;
     }
 
@@ -46,14 +53,19 @@ class Stream
    private:
     void query_input_device();
     void query_output_device();
-    int n_input_channels;
-    int n_output_channels;
+    int n_input_channels = 1;
+    int n_output_channels = 1;
     int input_device;
     int output_device;
     PaStreamParameters input_params;
     PaStreamParameters output_params;
     PaStream* pa_stream;
 };
+
+Stream::Stream()
+{
+    check_error(Pa_Initialize());
+}
 
 int main(void)
 {
