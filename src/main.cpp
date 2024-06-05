@@ -10,6 +10,9 @@ int main(void)
     err = Pa_Initialize();
     check_error(err);
 
+    int n_devices = Pa_GetDeviceCount();
+    std::cout << "number of devices: " << n_devices << '\n';
+
     err = Pa_Terminate();
     check_error(err);
 
