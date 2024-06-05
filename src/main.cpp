@@ -1,11 +1,14 @@
 #include <portaudio.h>
+#include <chrono>
 #include <cstdlib>
 #include <cstring>
 #include <iostream>
-static void check_error(PaError err);
+#include <thread>
 
 constexpr int default_sample_rate = 44100;
 constexpr unsigned long default_buffer_size = 512;
+
+static void check_error(PaError err);
 
 struct StreamConfig
 {
@@ -119,8 +122,8 @@ int main(void)
     Stream stream;
     stream.start();
 
-    int capture_time_secs = 5;
-    Pa_Sleep(capture_time_secs * 1000);
+    auto capture_duration = std::chrono::milliseconds(5000);
+    std::this_thread::sleep_for(capture_duration);
 
     stream.stop();
 
