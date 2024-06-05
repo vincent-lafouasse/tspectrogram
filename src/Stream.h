@@ -30,7 +30,7 @@ class Stream
     void query_input_device();
     void query_output_device();
     void setup_params();
-    int n_input_channels = 2;
+    int n_input_channels = 1;
     int n_output_channels = 2;
     int input_device;
     int output_device;

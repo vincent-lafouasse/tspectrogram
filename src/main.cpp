@@ -5,6 +5,26 @@
 
 #include "Stream.h"
 
+void render_volume_bar(float left, float right)
+{
+    constexpr float display_length = 100;
+    constexpr float threshold_unit = 1 / display_length;
+    float threshold;
+
+    for (size_t i = 0; i < display_length; i++)
+    {
+        threshold = i * threshold_unit;
+        if (left>= threshold && right>= threshold) 
+            std::cout << "█";
+        else if (left>= threshold)
+            std::cout << "▀";
+        else if (right>= threshold)
+            std::cout << "▄";
+        else
+            std::cout << " ";
+    }
+}
+
 int my_callback(const void* input_buffer,
                 void* output_buffer,
                 unsigned long buffer_size,
@@ -19,36 +39,11 @@ int my_callback(const void* input_buffer,
 
     const float* input = static_cast<const float*>(input_buffer);
 
-    float left_volume = 0;
-    float right_volume = 0;
-
-    for (size_t i = 0; i < 2 * buffer_size; i += 2)
+    for (size_t i = 0; i < buffer_size; i++) 
     {
-        left_volume = std::max(left_volume, std::abs(input[i]));
-        right_volume = std::max(right_volume, std::abs(input[i + 1]));
+        std::cout << input[i] << " ";
     }
-    std::cout << '\r';
 
-    std::cout << "l\t" << left_volume << "\tr\t" << right_volume;
-
-    /*
-    constexpr float display_length = 100;
-    constexpr float threshold_unit = 1 / display_length;
-    float threshold;
-
-    for (size_t i = 0; i < display_length; i++)
-    {
-        threshold = i * threshold_unit;
-        if (left_volume >= threshold && right_volume >= threshold) 
-            std::cout << "█";
-        else if (left_volume >= threshold)
-            std::cout << "▀";
-        else if (right_volume >= threshold)
-            std::cout << "▄";
-        else
-            std::cout << " ";
-    }
-    */
     std::cout.flush();
 
     return 0;
