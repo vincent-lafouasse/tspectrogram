@@ -53,8 +53,8 @@ class Stream
    private:
     void query_input_device();
     void query_output_device();
-    int n_input_channels = 1;
-    int n_output_channels = 1;
+    int n_input_channels = 2;
+    int n_output_channels = 0;
     int input_device;
     int output_device;
     PaStreamParameters input_params;
@@ -65,6 +65,65 @@ class Stream
 Stream::Stream()
 {
     check_error(Pa_Initialize());
+}
+
+void Stream::query_input_device()
+{
+    int n_devices = get_n_devices();
+    log_devices(n_devices);
+
+    int device;
+    while (1)
+    {
+        std::cout << "Which input device do you choose?\n";
+        std::cin >> device;
+
+        if (device >= n_devices || device < 0)
+        {
+            std::cout
+                << "device not found, please select a device between 0 and "
+                << n_devices - 1 << '\n';
+            continue;
+        }
+        const PaDeviceInfo* info = Pa_GetDeviceInfo(device);
+        if (n_input_channels && info->maxInputChannels < n_input_channels)
+        {
+            std::cout << "this device does not provide enough input channels\n";
+            continue;
+        }
+        break;
+    }
+    input_device = device;
+}
+
+void Stream::query_output_device()
+{
+    int n_devices = get_n_devices();
+    log_devices(n_devices);
+
+    int device;
+    while (1)
+    {
+        std::cout << "Which output device do you choose?\n";
+        std::cin >> device;
+
+        if (device >= n_devices || device < 0)
+        {
+            std::cout
+                << "device not found, please select a device between 0 and "
+                << n_devices - 1 << '\n';
+            continue;
+        }
+        const PaDeviceInfo* info = Pa_GetDeviceInfo(device);
+        if (n_output_channels && info->maxOutputChannels < n_output_channels)
+        {
+            std::cout
+                << "this device does not provide enough output channels\n";
+            continue;
+        }
+        break;
+    }
+    output_device = device;
 }
 
 int main(void)
