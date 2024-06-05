@@ -2,10 +2,6 @@
 #include <cstdlib>
 #include <cstring>
 #include <iostream>
-
-static int get_n_devices();
-static int query_user_for_device();
-static void log_devices(int n_devices);
 static void check_error(PaError err);
 
 constexpr int default_sample_rate = 44100;
@@ -28,11 +24,56 @@ class Stream
 {
    public:
     Stream();
-    int start();
-    int pause();
-    int close();
+    ~Stream();
+    void start();
+    void stop();
 
     static int callback(const void* input_buffer,
+                        void* output_buffer,
+                        unsigned long buffer_size,
+                        const PaStreamCallbackTimeInfo* time_info,
+                        PaStreamCallbackFlags status_flags,
+                        void* user_data);
+
+    StreamConfig cfg;
+
+   private:
+    void query_input_device();
+    void query_output_device();
+    void setup_params();
+    int n_input_channels = 2;
+    int n_output_channels = 2;
+    int input_device;
+    int output_device;
+    PaStreamParameters input_params;
+    PaStreamParameters output_params;
+    PaStream* pa_stream;
+};
+
+Stream::Stream()
+{
+    check_error(Pa_Initialize());
+    cfg = StreamConfig::default_config();
+    query_input_device();
+    query_output_device();
+    setup_params();
+    check_error(Pa_OpenStream(&pa_stream, &input_params, &output_params,
+                        cfg.sample_rate, cfg.buffer_size,
+                        paNoFlag, callback, NULL));
+
+}
+
+void Stream::start()
+{
+    check_error(Pa_StartStream(pa_stream));
+}
+
+void Stream::stop()
+{
+    check_error(Pa_StopStream(pa_stream));
+}
+
+int Stream::callback(const void* input_buffer,
                         void* output_buffer,
                         unsigned long buffer_size,
                         const PaStreamCallbackTimeInfo* time_info,
@@ -48,84 +89,48 @@ class Stream
         return 0;
     }
 
-    StreamConfig cfg;
-
-   private:
-    void query_input_device();
-    void query_output_device();
-    int n_input_channels = 2;
-    int n_output_channels = 0;
-    int input_device;
-    int output_device;
-    PaStreamParameters input_params;
-    PaStreamParameters output_params;
-    PaStream* pa_stream;
-};
-
-Stream::Stream()
+void Stream::setup_params()
 {
-    check_error(Pa_Initialize());
-    query_input_device();
-    query_output_device();
+    std::memset(&input_params, 0, sizeof(input_params));
+    std::memset(&output_params, 0, sizeof(output_params));
+
+    input_params.channelCount = n_input_channels;
+    input_params.device = input_device;
+    input_params.hostApiSpecificStreamInfo = NULL;
+    input_params.sampleFormat = paFloat32;
+    input_params.suggestedLatency =
+        Pa_GetDeviceInfo(input_device)->defaultLowInputLatency;
+
+    output_params.channelCount = n_output_channels;
+    output_params.device = output_device;
+    output_params.hostApiSpecificStreamInfo = NULL;
+    output_params.sampleFormat = paFloat32;
+    output_params.suggestedLatency =
+        Pa_GetDeviceInfo(output_device)->defaultLowOutputLatency;
+}
+
+Stream::~Stream()
+{
+    check_error(Pa_CloseStream(pa_stream));
+    check_error(Pa_Terminate());
 }
 
 int main(void)
 {
-    /*
-    PaError err;
-    err = Pa_Initialize();
-    check_error(err);
-
-    int device = query_user_for_device();
-    std::cout << "you chose " << device << "\n";
-
-    StreamConfig stream_config = StreamConfig::default_config();
-
-    PaStreamParameters input_params;
-    PaStreamParameters output_params;
-    std::memset(&input_params, 0, sizeof(input_params));
-    std::memset(&output_params, 0, sizeof(output_params));
-
-    input_params.channelCount = 1;
-    input_params.device = device;
-    input_params.hostApiSpecificStreamInfo = NULL;
-    input_params.sampleFormat = paFloat32;
-    input_params.suggestedLatency =
-        Pa_GetDeviceInfo(device)->defaultLowInputLatency;
-
-    output_params.channelCount = 1;
-    output_params.device = device;
-    output_params.hostApiSpecificStreamInfo = NULL;
-    output_params.sampleFormat = paFloat32;
-    output_params.suggestedLatency =
-        Pa_GetDeviceInfo(device)->defaultLowOutputLatency;
-
     Stream stream;
-    stream.cfg = stream_config;
-
-    PaStream* pa_stream;
-    err = Pa_OpenStream(&pa_stream, &input_params, &output_params,
-                        stream.cfg.sample_rate, stream.cfg.buffer_size,
-                        paNoFlag, stream.callback, NULL);
-    check_error(err);
-
-    err = Pa_StartStream(pa_stream);
-    check_error(err);
+    stream.start();
 
     int capture_time_secs = 5;
     Pa_Sleep(capture_time_secs * 1000);
 
-    err = Pa_StopStream(pa_stream);
-    check_error(err);
+    stream.stop();
 
-    err = Pa_CloseStream(pa_stream);
-    check_error(err);
-    err = Pa_Terminate();
-    check_error(err);
-
-    */
     return EXIT_SUCCESS;
 }
+
+
+static int get_n_devices();
+static void log_devices(int n_devices);
 
 void Stream::query_input_device()
 {
