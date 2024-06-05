@@ -10,6 +10,7 @@ add_compile_options(-g3)
 add_executable(tspectrogram)
 target_sources(tspectrogram PRIVATE
 	src/main.cpp
+	src/Stream.cpp
 )
 target_include_directories(tspectrogram PUBLIC src)
 
