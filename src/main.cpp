@@ -27,7 +27,6 @@ struct StreamConfig
 class Stream
 {
    public:
-    StreamConfig cfg;
     int start();
     int pause();
     int close();
@@ -38,7 +37,17 @@ class Stream
                         PaStreamCallbackFlags status_flags,
                         void* user_data)
     {
+        return 0;
     }
+
+    StreamConfig cfg;
+    int n_input_channels;
+    int n_output_channels;
+    int input_device;
+    int output_device;
+    PaStreamParameters input_params;
+    PaStreamParameters output_params;
+    PaStream* pa_stream;
 };
 
 int main(void)
