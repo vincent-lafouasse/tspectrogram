@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.5)
 project(tspectrogram)
 set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 add_compile_options(-Wall -Wextra -Wpedantic)
 add_compile_options(-g3)
 
