@@ -23,6 +23,19 @@ int main(void)
         exit(EXIT_SUCCESS);
     }
 
+    for (int i = 0; i < n_devices; i++)
+    {
+        const PaDeviceInfo* device_info = Pa_GetDeviceInfo(i);
+        std::cout << "Device " << i << '\n';
+        std::cout << "\tname " << device_info->name << '\n';
+        std::cout << "\tmax input channels " << device_info->maxInputChannels
+                  << '\n';
+        std::cout << "\tmax output channels " << device_info->maxOutputChannels
+                  << '\n';
+        std::cout << "\tdefault sample rate " << device_info->defaultSampleRate
+                  << "\n\n";
+    }
+
     err = Pa_Terminate();
     check_error(err);
 
