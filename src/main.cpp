@@ -3,6 +3,7 @@
 #include <iostream>
 
 static int get_n_devices();
+static int query_user_for_device();
 static void log_devices(int n_devices);
 static void check_error(PaError err);
 
@@ -12,13 +13,42 @@ int main(void)
     err = Pa_Initialize();
     check_error(err);
 
-    int n_devices = get_n_devices();
-    log_devices(n_devices);
+    int device = query_user_for_device();
+    std::cout << "you chose " << device << "\n";
 
     err = Pa_Terminate();
     check_error(err);
 
     return EXIT_SUCCESS;
+}
+
+static int query_user_for_device()
+{
+    int n_devices = get_n_devices();
+    log_devices(n_devices);
+
+    int device;
+    while (1)
+    {
+        std::cout << "Which input device do you choose?\n";
+        std::cin >> device;
+
+        if (device >= n_devices || device < 0)
+        {
+            std::cout
+                << "device not found, please select a device between 0 and "
+                << n_devices - 1 << '\n';
+            continue;
+        }
+        const PaDeviceInfo* info = Pa_GetDeviceInfo(device);
+        if (info->maxInputChannels < 1)
+        {
+            std::cout << "this device does not provide input channels\n";
+            continue;
+        }
+        break;
+    }
+    return device;
 }
 
 static int get_n_devices()
