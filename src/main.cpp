@@ -1,5 +1,6 @@
-#include <iostream>
+#include <portaudio.h>
 
-int main(void) {
-	std::cout << "hi" << std::endl;
+int main(void)
+{
+    PaError err = Pa_Initialize();
 }

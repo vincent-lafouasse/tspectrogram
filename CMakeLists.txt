@@ -13,3 +13,5 @@ target_sources(tspectrogram PRIVATE
 )
 target_include_directories(tspectrogram PUBLIC src)
 
+add_subdirectory(lib)
+target_link_libraries(tspectrogram portaudio)
