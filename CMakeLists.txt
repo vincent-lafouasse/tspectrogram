@@ -1,0 +1,15 @@
+cmake_minimum_required(VERSION 3.5)
+
+project(tspectrogram)
+set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
+
+set(CMAKE_CXX_STANDARD 17)
+add_compile_options(-Wall -Wextra -Wpedantic)
+add_compile_options(-g3)
+
+add_executable(tspectrogram)
+target_sources(tspectrogram PRIVATE
+	src/main.cpp
+)
+target_include_directories(tspectrogram PUBLIC src)
+
