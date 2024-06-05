@@ -2,6 +2,8 @@
 #include <cstdlib>
 #include <iostream>
 
+static int get_n_devices();
+static void log_devices(int n_devices);
 static void check_error(PaError err);
 
 int main(void)
@@ -10,6 +12,17 @@ int main(void)
     err = Pa_Initialize();
     check_error(err);
 
+    int n_devices = get_n_devices();
+    log_devices(n_devices);
+
+    err = Pa_Terminate();
+    check_error(err);
+
+    return EXIT_SUCCESS;
+}
+
+static int get_n_devices()
+{
     int n_devices = Pa_GetDeviceCount();
     std::cout << "number of devices: " << n_devices << '\n';
     if (n_devices < 0)
@@ -22,7 +35,11 @@ int main(void)
         std::cout << "No audio device found\n";
         exit(EXIT_SUCCESS);
     }
+    return n_devices;
+}
 
+static void log_devices(int n_devices)
+{
     for (int i = 0; i < n_devices; i++)
     {
         const PaDeviceInfo* device_info = Pa_GetDeviceInfo(i);
@@ -35,11 +52,6 @@ int main(void)
         std::cout << "\tdefault sample rate " << device_info->defaultSampleRate
                   << "\n\n";
     }
-
-    err = Pa_Terminate();
-    check_error(err);
-
-    return EXIT_SUCCESS;
 }
 
 static void check_error(PaError err)
