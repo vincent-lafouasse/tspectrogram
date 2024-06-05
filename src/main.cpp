@@ -58,9 +58,8 @@ Stream::Stream()
     query_output_device();
     setup_params();
     check_error(Pa_OpenStream(&pa_stream, &input_params, &output_params,
-                        cfg.sample_rate, cfg.buffer_size,
-                        paNoFlag, callback, NULL));
-
+                              cfg.sample_rate, cfg.buffer_size, paNoFlag,
+                              callback, NULL));
 }
 
 void Stream::start()
@@ -74,20 +73,20 @@ void Stream::stop()
 }
 
 int Stream::callback(const void* input_buffer,
-                        void* output_buffer,
-                        unsigned long buffer_size,
-                        const PaStreamCallbackTimeInfo* time_info,
-                        PaStreamCallbackFlags status_flags,
-                        void* user_data)
-    {
-        (void)input_buffer;
-        (void)output_buffer;
-        (void)buffer_size;
-        (void)time_info;
-        (void)status_flags;
-        (void)user_data;
-        return 0;
-    }
+                     void* output_buffer,
+                     unsigned long buffer_size,
+                     const PaStreamCallbackTimeInfo* time_info,
+                     PaStreamCallbackFlags status_flags,
+                     void* user_data)
+{
+    (void)input_buffer;
+    (void)output_buffer;
+    (void)buffer_size;
+    (void)time_info;
+    (void)status_flags;
+    (void)user_data;
+    return 0;
+}
 
 void Stream::setup_params()
 {
@@ -127,7 +126,6 @@ int main(void)
 
     return EXIT_SUCCESS;
 }
-
 
 static int get_n_devices();
 static void log_devices(int n_devices);
