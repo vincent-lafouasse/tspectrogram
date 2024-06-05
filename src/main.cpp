@@ -1,5 +1,6 @@
 #include <portaudio.h>
 #include <cstdlib>
+#include <cstring>
 #include <iostream>
 
 static int get_n_devices();
@@ -15,6 +16,18 @@ int main(void)
 
     int device = query_user_for_device();
     std::cout << "you chose " << device << "\n";
+
+    PaStreamParameters input_params;
+    PaStreamParameters output_params;
+    std::memset(&input_params, 0, sizeof(input_params));
+    std::memset(&output_params, 0, sizeof(output_params));
+
+    input_params.channelCount = 2;
+    input_params.device = device;
+    input_params.hostApiSpecificStreamInfo = NULL;
+    input_params.sampleFormat = paFloat32;
+    input_params.suggestedLatency =
+        Pa_GetDeviceInfo(device)->defaultLowInputLatency;
 
     err = Pa_Terminate();
     check_error(err);
