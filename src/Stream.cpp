@@ -18,6 +18,7 @@ int do_nothing_callback(const void* input_buffer,
     (void)time_info;
     (void)status_flags;
     (void)user_data;
+    std::cout << 'a';
     return 0;
 }
 
@@ -25,10 +26,18 @@ Stream::Stream()
 {
     check_error(Pa_Initialize());
     cfg = StreamConfig::default_config();
-    callback = do_nothing_callback;
     query_input_device();
     query_output_device();
     setup_params();
+}
+
+void Stream::open(int (*callback)(const void* input_buffer,
+                                  void* output_buffer,
+                                  unsigned long buffer_size,
+                                  const PaStreamCallbackTimeInfo* time_info,
+                                  PaStreamCallbackFlags status_flags,
+                                  void* user_data))
+{
     check_error(Pa_OpenStream(&pa_stream, &input_params, &output_params,
                               cfg.sample_rate, cfg.buffer_size, paNoFlag,
                               callback, NULL));
