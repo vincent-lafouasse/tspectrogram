@@ -6,29 +6,9 @@
 
 #include "Stream.h"
 
-constexpr float sensibility = 0.1;
+constexpr float sensibility = 0.4;
 
-void render_stereo_volume_bar(float left, float right)
-{
-    constexpr float display_length = 100;
-    constexpr float threshold_unit = 1 / display_length;
-    float threshold;
-
-    for (size_t i = 0; i < display_length; i++)
-    {
-        threshold = i * threshold_unit;
-        if (left >= threshold && right >= threshold)
-            std::cout << "█";
-        else if (left >= threshold)
-            std::cout << "▀";
-        else if (right >= threshold)
-            std::cout << "▄";
-        else
-            std::cout << " ";
-    }
-}
-
-void render_mono_volume_bar(float level)
+static void render_mono_volume_bar(float level)
 {
     constexpr float display_length = 100;
     constexpr float threshold_unit = 1 / display_length;
@@ -44,12 +24,12 @@ void render_mono_volume_bar(float level)
     }
 }
 
-int mono_spectrogram(const void* input_buffer,
-                     void* output_buffer,
-                     unsigned long buffer_size,
-                     const PaStreamCallbackTimeInfo* time_info,
-                     PaStreamCallbackFlags status_flags,
-                     void* user_data)
+static int mono_spectrogram(const void* input_buffer,
+                            void* output_buffer,
+                            unsigned long buffer_size,
+                            const PaStreamCallbackTimeInfo* time_info,
+                            PaStreamCallbackFlags status_flags,
+                            void* user_data)
 {
     (void)output_buffer;
     (void)time_info;
