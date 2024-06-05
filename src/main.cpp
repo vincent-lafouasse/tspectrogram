@@ -1,6 +1,7 @@
 #include <chrono>
 #include <cstdlib>
 #include <thread>
+#include <iostream>
 
 #include "Stream.h"
 
@@ -21,14 +22,35 @@ int my_callback(const void* input_buffer,
     float left_volume = 0;
     float right_volume = 0;
 
-    for (size_t i = 0; i < buffer_size; i += 2)
+    for (size_t i = 0; i < 2 * buffer_size; i += 2)
     {
-        left_volume = std::max(left_volume, input[i]);
+        left_volume = std::max(left_volume, std::abs(input[i]));
+        right_volume = std::max(right_volume, std::abs(input[i + 1]));
     }
-    for (size_t i = 1; i < buffer_size; i += 2)
+    std::cout << '\r';
+
+    std::cout << "l\t" << left_volume << "\tr\t" << right_volume;
+
+    /*
+    constexpr float display_length = 100;
+    constexpr float threshold_unit = 1 / display_length;
+    float threshold;
+
+    for (size_t i = 0; i < display_length; i++)
     {
-        right_volume = std::max(right_volume, input[i]);
+        threshold = i * threshold_unit;
+        if (left_volume >= threshold && right_volume >= threshold) 
+            std::cout << "█";
+        else if (left_volume >= threshold)
+            std::cout << "▀";
+        else if (right_volume >= threshold)
+            std::cout << "▄";
+        else
+            std::cout << " ";
     }
+    */
+    std::cout.flush();
+
     return 0;
 }
 
