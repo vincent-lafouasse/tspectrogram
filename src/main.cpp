@@ -65,6 +65,66 @@ class Stream
 Stream::Stream()
 {
     check_error(Pa_Initialize());
+    query_input_device();
+    query_output_device();
+}
+
+int main(void)
+{
+    /*
+    PaError err;
+    err = Pa_Initialize();
+    check_error(err);
+
+    int device = query_user_for_device();
+    std::cout << "you chose " << device << "\n";
+
+    StreamConfig stream_config = StreamConfig::default_config();
+
+    PaStreamParameters input_params;
+    PaStreamParameters output_params;
+    std::memset(&input_params, 0, sizeof(input_params));
+    std::memset(&output_params, 0, sizeof(output_params));
+
+    input_params.channelCount = 1;
+    input_params.device = device;
+    input_params.hostApiSpecificStreamInfo = NULL;
+    input_params.sampleFormat = paFloat32;
+    input_params.suggestedLatency =
+        Pa_GetDeviceInfo(device)->defaultLowInputLatency;
+
+    output_params.channelCount = 1;
+    output_params.device = device;
+    output_params.hostApiSpecificStreamInfo = NULL;
+    output_params.sampleFormat = paFloat32;
+    output_params.suggestedLatency =
+        Pa_GetDeviceInfo(device)->defaultLowOutputLatency;
+
+    Stream stream;
+    stream.cfg = stream_config;
+
+    PaStream* pa_stream;
+    err = Pa_OpenStream(&pa_stream, &input_params, &output_params,
+                        stream.cfg.sample_rate, stream.cfg.buffer_size,
+                        paNoFlag, stream.callback, NULL);
+    check_error(err);
+
+    err = Pa_StartStream(pa_stream);
+    check_error(err);
+
+    int capture_time_secs = 5;
+    Pa_Sleep(capture_time_secs * 1000);
+
+    err = Pa_StopStream(pa_stream);
+    check_error(err);
+
+    err = Pa_CloseStream(pa_stream);
+    check_error(err);
+    err = Pa_Terminate();
+    check_error(err);
+
+    */
+    return EXIT_SUCCESS;
 }
 
 void Stream::query_input_device()
@@ -124,91 +184,6 @@ void Stream::query_output_device()
         break;
     }
     output_device = device;
-}
-
-int main(void)
-{
-    PaError err;
-    err = Pa_Initialize();
-    check_error(err);
-
-    int device = query_user_for_device();
-    std::cout << "you chose " << device << "\n";
-
-    StreamConfig stream_config = StreamConfig::default_config();
-
-    PaStreamParameters input_params;
-    PaStreamParameters output_params;
-    std::memset(&input_params, 0, sizeof(input_params));
-    std::memset(&output_params, 0, sizeof(output_params));
-
-    input_params.channelCount = 1;
-    input_params.device = device;
-    input_params.hostApiSpecificStreamInfo = NULL;
-    input_params.sampleFormat = paFloat32;
-    input_params.suggestedLatency =
-        Pa_GetDeviceInfo(device)->defaultLowInputLatency;
-
-    output_params.channelCount = 1;
-    output_params.device = device;
-    output_params.hostApiSpecificStreamInfo = NULL;
-    output_params.sampleFormat = paFloat32;
-    output_params.suggestedLatency =
-        Pa_GetDeviceInfo(device)->defaultLowOutputLatency;
-
-    Stream stream;
-    stream.cfg = stream_config;
-
-    PaStream* pa_stream;
-    err = Pa_OpenStream(&pa_stream, &input_params, &output_params,
-                        stream.cfg.sample_rate, stream.cfg.buffer_size,
-                        paNoFlag, stream.callback, NULL);
-    check_error(err);
-
-    err = Pa_StartStream(pa_stream);
-    check_error(err);
-
-    int capture_time_secs = 5;
-    Pa_Sleep(capture_time_secs * 1000);
-
-    err = Pa_StopStream(pa_stream);
-    check_error(err);
-
-    err = Pa_CloseStream(pa_stream);
-    check_error(err);
-    err = Pa_Terminate();
-    check_error(err);
-
-    return EXIT_SUCCESS;
-}
-
-static int query_user_for_device()
-{
-    int n_devices = get_n_devices();
-    log_devices(n_devices);
-
-    int device;
-    while (1)
-    {
-        std::cout << "Which input device do you choose?\n";
-        std::cin >> device;
-
-        if (device >= n_devices || device < 0)
-        {
-            std::cout
-                << "device not found, please select a device between 0 and "
-                << n_devices - 1 << '\n';
-            continue;
-        }
-        const PaDeviceInfo* info = Pa_GetDeviceInfo(device);
-        if (info->maxInputChannels < 1)
-        {
-            std::cout << "this device does not provide input channels\n";
-            continue;
-        }
-        break;
-    }
-    return device;
 }
 
 static int get_n_devices()
