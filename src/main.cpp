@@ -26,7 +26,7 @@ struct FFTData
     double* output;
     fftw_plan plan;
     int start_index;  // represents 20 Hz, ie ignore information below 20 Hz
-    int end_index;    // represents 20 kHz
+    int spectrogram_size;         // number of frequency buckets to fetch
 };
 
 FFTData::FFTData()
@@ -41,9 +41,10 @@ FFTData::FFTData()
     constexpr double sample_ratio =
         buffer_size / static_cast<double>(sample_rate);
     start_index = std::ceil(min_frequency * sample_ratio);
-    end_index =
+    const int end_index =
         std::min(static_cast<int>(buffer_size),
                  static_cast<int>(std::ceil(max_frequency * sample_ratio)));
+    spectrogram_size = end_index - start_index;
 }
 
 FFTData::~FFTData()
