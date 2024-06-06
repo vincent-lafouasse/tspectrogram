@@ -55,9 +55,7 @@ int main(void)
     constexpr unsigned long buffer_size = 512;
     constexpr int n_channels = 1;
 
-    constexpr InputStreamConfig cfg = {sample_rate, buffer_size, n_channels
-
-    };
+    constexpr InputStreamConfig cfg = {sample_rate, buffer_size, n_channels};
 
     Stream stream;
     stream.open(mono_spectrogram);
