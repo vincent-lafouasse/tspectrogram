@@ -70,13 +70,15 @@ static int mono_spectrogram(const void* input_buffer,
     for (size_t i = 0; i < buffer_size; i++)
         data->input[i] = static_cast<double>(input[i]);
 
-    const float rms = std::accumulate(input, input + buffer_size, 0.0,
-                                      [](float aggregate, float current) {
-                                          return aggregate + current * current;
-                                      });
+    fftw_execute(data->plan);
+
     std::cout << '\r';
     constexpr size_t line_length = 100;
-    render_mono_volume_bar(rms, sensibility, line_length);
+    for (size_t i = 0; i < line_length; i++)
+    {
+        
+    }
+
     std::cout.flush();
 
     return 0;
