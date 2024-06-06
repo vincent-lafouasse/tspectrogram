@@ -10,11 +10,11 @@ struct InputStreamConfig
     int n_channels;
 };
 
-class Stream
+class InputStream
 {
    public:
-    Stream();
-    ~Stream();
+    InputStream();
+    ~InputStream();
     void start();
     void stop();
 

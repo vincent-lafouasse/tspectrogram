@@ -22,7 +22,7 @@ int do_nothing_callback(const void* input_buffer,
     return 0;
 }
 
-Stream::Stream()
+InputStream::InputStream()
 {
     check_error(Pa_Initialize());
     cfg = InputStreamConfig::default_config();
@@ -31,29 +31,30 @@ Stream::Stream()
     setup_params();
 }
 
-void Stream::open(int (*callback)(const void* input_buffer,
-                                  void* output_buffer,
-                                  unsigned long buffer_size,
-                                  const PaStreamCallbackTimeInfo* time_info,
-                                  PaStreamCallbackFlags status_flags,
-                                  void* user_data))
+void InputStream::open(
+    int (*callback)(const void* input_buffer,
+                    void* output_buffer,
+                    unsigned long buffer_size,
+                    const PaStreamCallbackTimeInfo* time_info,
+                    PaStreamCallbackFlags status_flags,
+                    void* user_data))
 {
     check_error(Pa_OpenStream(&pa_stream, &input_params, &output_params,
                               cfg.sample_rate, cfg.buffer_size, paNoFlag,
                               callback, NULL));
 }
 
-void Stream::start()
+void InputStream::start()
 {
     check_error(Pa_StartStream(pa_stream));
 }
 
-void Stream::stop()
+void InputStream::stop()
 {
     check_error(Pa_StopStream(pa_stream));
 }
 
-void Stream::setup_params()
+void InputStream::setup_params()
 {
     std::memset(&input_params, 0, sizeof(input_params));
     std::memset(&output_params, 0, sizeof(output_params));
@@ -73,7 +74,7 @@ void Stream::setup_params()
         Pa_GetDeviceInfo(output_device)->defaultLowOutputLatency;
 }
 
-Stream::~Stream()
+InputStream::~InputStream()
 {
     check_error(Pa_CloseStream(pa_stream));
     check_error(Pa_Terminate());
@@ -82,7 +83,7 @@ Stream::~Stream()
 static int get_n_devices();
 static void log_devices(int n_devices);
 
-void Stream::query_input_device()
+void InputStream::query_input_device()
 {
     int n_devices = get_n_devices();
     log_devices(n_devices);
@@ -111,7 +112,7 @@ void Stream::query_input_device()
     input_device = device;
 }
 
-void Stream::query_output_device()
+void InputStream::query_output_device()
 {
     int n_devices = get_n_devices();
     log_devices(n_devices);
