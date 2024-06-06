@@ -3,16 +3,15 @@
 #include <cstddef>
 #include <iostream>
 
-void render_mono_volume_bar(float level, float sensibility)
+void render_mono_volume_bar(float volume, float sensibility, size_t line_length)
 {
-    constexpr size_t display_length = 100;
-    constexpr float threshold_unit = 1 / static_cast<float>(display_length);
+    const float volume_unit = 1 / static_cast<float>(line_length);
     float threshold;
 
-    for (size_t i = 0; i < display_length; i++)
+    for (size_t i = 0; i < line_length; i++)
     {
-        threshold = i * threshold_unit;
-        if (level * sensibility >= threshold)
+        threshold = i * volume_unit;
+        if (volume * sensibility >= threshold)
             std::cout << "█";
         else
             std::cout << " ";

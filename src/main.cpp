@@ -12,10 +12,8 @@ constexpr float sensibility = 0.4;
 constexpr int sample_rate = 48000;
 constexpr unsigned long buffer_size = 512;
 constexpr int n_channels = 1;
-[[maybe_unused]]
-constexpr float min_frequency = 20.0;
-[[maybe_unused]]
-constexpr float max_frequency = 20000.0;
+[[maybe_unused]] constexpr float min_frequency = 20.0;
+[[maybe_unused]] constexpr float max_frequency = 20000.0;
 
 // Data for a 1d real to real fft (r2r_1d), both buffers are doubles
 struct FFTData
@@ -64,11 +62,13 @@ static int mono_spectrogram(const void* input_buffer,
     for (size_t i = 0; i < buffer_size; i++)
         data->input[i] = static_cast<double>(input[i]);
 
-    const float rms = std::accumulate(
-        input, input + buffer_size, 0.0, [](float aggregate, float current)
-        { return aggregate + current * current; });
+    const float rms = std::accumulate(input, input + buffer_size, 0.0,
+                                      [](float aggregate, float current) {
+                                          return aggregate + current * current;
+                                      });
     std::cout << '\r';
-    render_mono_volume_bar(rms, sensibility);
+    constexpr size_t line_length = 100;
+    render_mono_volume_bar(rms, sensibility, line_length);
     std::cout.flush();
 
     return 0;
