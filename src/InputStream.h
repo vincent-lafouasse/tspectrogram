@@ -2,9 +2,9 @@
 
 #include <portaudio.h>
 
-struct StreamConfig
+struct InputStreamConfig
 {
-    static StreamConfig default_config();
+    static InputStreamConfig default_config();
     int sample_rate;
     unsigned long buffer_size;
 };
@@ -24,7 +24,7 @@ class Stream
                               PaStreamCallbackFlags status_flags,
                               void* user_data));
 
-    StreamConfig cfg;
+    InputStreamConfig cfg;
 
    private:
     void query_input_device();

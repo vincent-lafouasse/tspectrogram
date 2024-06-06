@@ -25,7 +25,7 @@ int do_nothing_callback(const void* input_buffer,
 Stream::Stream()
 {
     check_error(Pa_Initialize());
-    cfg = StreamConfig::default_config();
+    cfg = InputStreamConfig::default_config();
     query_input_device();
     query_output_device();
     setup_params();
@@ -174,12 +174,12 @@ static void log_devices(int n_devices)
     }
 }
 
-StreamConfig StreamConfig::default_config()
+InputStreamConfig InputStreamConfig::default_config()
 {
     constexpr int default_sample_rate = 44100;
     constexpr unsigned long default_buffer_size = 512;
 
-    StreamConfig cfg;
+    InputStreamConfig cfg;
     cfg.sample_rate = default_sample_rate;
     cfg.buffer_size = default_buffer_size;
     return cfg;
