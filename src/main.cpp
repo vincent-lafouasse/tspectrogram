@@ -20,8 +20,8 @@ struct FFTData
 {
     FFTData();
     ~FFTData();
-    std::array<double, buffer_size> input;
-    std::array<double, buffer_size> output;
+    double* input;
+    double* output;
     fftw_plan plan;
     int start_index;
     int size;
@@ -29,12 +29,16 @@ struct FFTData
 
 FFTData::FFTData()
 {
-    plan = fftw_plan_r2r_1d(buffer_size, input.data(), output.data(), FFTW_HC2R,
-                            FFTW_ESTIMATE);
+    input = static_cast<double*>(fftw_malloc(buffer_size * sizeof(double)));
+    output = static_cast<double*>(fftw_malloc(buffer_size * sizeof(double)));
+    plan =
+        fftw_plan_r2r_1d(buffer_size, input, output, FFTW_HC2R, FFTW_ESTIMATE);
 }
 
 FFTData::~FFTData()
 {
+    fftw_free(input);
+    fftw_free(output);
     fftw_destroy_plan(plan);
 }
 
@@ -54,6 +58,7 @@ static int mono_spectrogram(const void* input_buffer,
 
     const float* input = static_cast<const float*>(input_buffer);
     FFTData* data = static_cast<FFTData*>(user_data);
+    (void)data;
 
     const float rms = std::accumulate(input, input + buffer_size, 0.0,
                                       [](float aggregate, float current) {
