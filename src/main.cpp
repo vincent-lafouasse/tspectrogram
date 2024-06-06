@@ -15,6 +15,7 @@ constexpr int n_channels = 1;
 constexpr float min_frequency = 20.0;
 constexpr float max_frequency = 20000.0;
 
+// Data for a 1d real to real fft (r2r_1d), both buffers are doubles
 struct FFTData
 {
     FFTData();
