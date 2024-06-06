@@ -30,13 +30,8 @@ class InputStream
 
    private:
     void query_input_device();
-    void query_output_device();
     void setup_params();
-    int n_input_channels = 1;
-    int n_output_channels = 2;
     int input_device;
-    int output_device;
     PaStreamParameters input_params;
-    PaStreamParameters output_params;
     PaStream* pa_stream;
 };
