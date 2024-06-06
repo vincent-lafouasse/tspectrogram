@@ -4,6 +4,7 @@
 #include <iostream>
 
 static void check_error(PaError err);
+static int query_input_device(int n_channels);
 
 int do_nothing_callback(const void* input_buffer,
                         void* output_buffer,
@@ -27,16 +28,30 @@ InputStream::InputStream()
 {
     check_error(Pa_Initialize());
     cfg = InputStreamConfig::default_config();
-    query_input_device();
-    setup_params();
+    input_device = query_input_device(cfg.n_channels);
+
+    std::memset(&input_params, 0, sizeof(input_params));
+    input_params.channelCount = cfg.n_channels;
+    input_params.device = input_device;
+    input_params.hostApiSpecificStreamInfo = NULL;
+    input_params.sampleFormat = paFloat32;
+    input_params.suggestedLatency =
+        Pa_GetDeviceInfo(input_device)->defaultLowInputLatency;
 }
 
 InputStream::InputStream(InputStreamConfig stream_config)
 {
     check_error(Pa_Initialize());
     cfg = stream_config;
-    query_input_device();
-    setup_params();
+    input_device = query_input_device(cfg.n_channels);
+
+    std::memset(&input_params, 0, sizeof(input_params));
+    input_params.channelCount = cfg.n_channels;
+    input_params.device = input_device;
+    input_params.hostApiSpecificStreamInfo = NULL;
+    input_params.sampleFormat = paFloat32;
+    input_params.suggestedLatency =
+        Pa_GetDeviceInfo(input_device)->defaultLowInputLatency;
 }
 
 void InputStream::open(
@@ -61,18 +76,6 @@ void InputStream::stop()
     check_error(Pa_StopStream(pa_stream));
 }
 
-void InputStream::setup_params()
-{
-    std::memset(&input_params, 0, sizeof(input_params));
-
-    input_params.channelCount = cfg.n_channels;
-    input_params.device = input_device;
-    input_params.hostApiSpecificStreamInfo = NULL;
-    input_params.sampleFormat = paFloat32;
-    input_params.suggestedLatency =
-        Pa_GetDeviceInfo(input_device)->defaultLowInputLatency;
-}
-
 InputStream::~InputStream()
 {
     check_error(Pa_CloseStream(pa_stream));
@@ -82,7 +85,7 @@ InputStream::~InputStream()
 static int get_n_devices();
 static void log_devices(int n_devices);
 
-void InputStream::query_input_device()
+static int query_input_device(int n_channels)
 {
     int n_devices = get_n_devices();
     log_devices(n_devices);
@@ -101,14 +104,15 @@ void InputStream::query_input_device()
             continue;
         }
         const PaDeviceInfo* info = Pa_GetDeviceInfo(device);
-        if (info->maxInputChannels < cfg.n_channels)
+        if (info->maxInputChannels < n_channels)
         {
             std::cout << "this device does not provide enough input channels\n";
             continue;
         }
         break;
     }
-    input_device = device;
+
+    return device;
 }
 
 static int get_n_devices()

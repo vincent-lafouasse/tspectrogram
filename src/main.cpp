@@ -38,10 +38,9 @@ static int mono_spectrogram(const void* input_buffer,
 
     const float* input = static_cast<const float*>(input_buffer);
 
-    const float rms = std::accumulate(input, input + buffer_size, 0.0,
-                                      [](float aggregate, float current) {
-                                          return aggregate + current * current;
-                                      });
+    const float rms = std::accumulate(
+        input, input + buffer_size, 0.0, [](float aggregate, float current)
+        { return aggregate + current * current; });
     std::cout << '\r';
     render_mono_volume_bar(rms, sensibility);
     std::cout.flush();

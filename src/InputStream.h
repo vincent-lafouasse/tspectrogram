@@ -29,8 +29,6 @@ class InputStream
     InputStreamConfig cfg;
 
    private:
-    void query_input_device();
-    void setup_params();
     int input_device;
     PaStreamParameters input_params;
     PaStream* pa_stream;
