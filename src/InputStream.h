@@ -14,6 +14,7 @@ class InputStream
 {
    public:
     InputStream();
+    InputStream(InputStreamConfig stream_config);
     ~InputStream();
     void start();
     void stop();

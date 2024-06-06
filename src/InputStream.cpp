@@ -31,6 +31,15 @@ InputStream::InputStream()
     setup_params();
 }
 
+InputStream::InputStream(InputStreamConfig stream_config)
+{
+    check_error(Pa_Initialize());
+    cfg = stream_config;
+    query_input_device();
+    query_output_device();
+    setup_params();
+}
+
 void InputStream::open(
     int (*callback)(const void* input_buffer,
                     void* output_buffer,
