@@ -5,9 +5,12 @@
 #include <thread>
 
 #include "InputStream.h"
-#include "fftw3.h"
 
 constexpr float sensibility = 0.4;
+
+struct FFTData
+{
+};
 
 static void render_mono_volume_bar(float level, float sensibility);
 
@@ -24,6 +27,7 @@ static int mono_spectrogram(const void* input_buffer,
     (void)user_data;
 
     const float* input = static_cast<const float*>(input_buffer);
+    FFTData* data = static_cast<FFTData*>(user_data);
 
     const float rms = std::accumulate(
         input, input + buffer_size, 0.0, [](float aggregate, float current)
@@ -59,8 +63,10 @@ int main(void)
 
     constexpr InputStreamConfig cfg = {sample_rate, buffer_size, n_channels};
 
+    FFTData callback_data;
+
     InputStream stream(cfg);
-    stream.open(mono_spectrogram);
+    stream.open(mono_spectrogram, &callback_data);
     stream.start();
 
     auto capture_duration = std::chrono::seconds(10);

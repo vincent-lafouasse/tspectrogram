@@ -24,7 +24,8 @@ class InputStream
                               unsigned long buffer_size,
                               const PaStreamCallbackTimeInfo* time_info,
                               PaStreamCallbackFlags status_flags,
-                              void* user_data));
+                              void* user_data),
+              void* data);
 
     InputStreamConfig cfg;
 

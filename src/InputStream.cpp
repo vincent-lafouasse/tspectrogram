@@ -60,10 +60,11 @@ void InputStream::open(
                     unsigned long buffer_size,
                     const PaStreamCallbackTimeInfo* time_info,
                     PaStreamCallbackFlags status_flags,
-                    void* user_data))
+                    void* user_data),
+    void* data)
 {
     check_error(Pa_OpenStream(&pa_stream, &input_params, NULL, cfg.sample_rate,
-                              cfg.buffer_size, paNoFlag, callback, NULL));
+                              cfg.buffer_size, paNoFlag, callback, data));
 }
 
 void InputStream::start()
