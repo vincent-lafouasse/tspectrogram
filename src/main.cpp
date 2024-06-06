@@ -31,8 +31,10 @@ FFTData::FFTData()
 {
     input = static_cast<double*>(fftw_malloc(buffer_size * sizeof(double)));
     output = static_cast<double*>(fftw_malloc(buffer_size * sizeof(double)));
-    plan =
-        fftw_plan_r2r_1d(buffer_size, input, output, FFTW_HC2R, FFTW_ESTIMATE);
+
+    constexpr unsigned int plan_flags = FFTW_ESTIMATE;
+    constexpr fftw_r2r_kind kind = FFTW_HC2R;
+    plan = fftw_plan_r2r_1d(buffer_size, input, output, kind, plan_flags);
 }
 
 FFTData::~FFTData()
