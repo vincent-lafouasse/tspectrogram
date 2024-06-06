@@ -8,7 +8,7 @@
 
 constexpr float sensibility = 0.4;
 
-static void render_mono_volume_bar(float level)
+static void render_mono_volume_bar(float level, float sensibility)
 {
     constexpr size_t display_length = 100;
     constexpr float threshold_unit = 1 / static_cast<float>(display_length);
@@ -43,7 +43,7 @@ static int mono_spectrogram(const void* input_buffer,
                                           return aggregate + current * current;
                                       });
     std::cout << '\r';
-    render_mono_volume_bar(rms);
+    render_mono_volume_bar(rms, sensibility);
     std::cout.flush();
 
     return 0;
