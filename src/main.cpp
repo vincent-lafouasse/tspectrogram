@@ -1,4 +1,3 @@
-#include <array>
 #include <chrono>
 #include <cstdlib>
 #include <iostream>
@@ -7,12 +6,15 @@
 
 #include "InputStream.h"
 #include "fftw3.h"
+#include "ui.h"
 
 constexpr float sensibility = 0.4;
 constexpr int sample_rate = 48000;
 constexpr unsigned long buffer_size = 512;
 constexpr int n_channels = 1;
+[[maybe_unused]]
 constexpr float min_frequency = 20.0;
+[[maybe_unused]]
 constexpr float max_frequency = 20000.0;
 
 // Data for a 1d real to real fft (r2r_1d), both buffers are doubles
@@ -44,8 +46,6 @@ FFTData::~FFTData()
     fftw_destroy_plan(plan);
 }
 
-static void render_mono_volume_bar(float level, float sensibility);
-
 static int mono_spectrogram(const void* input_buffer,
                             void* output_buffer,
                             unsigned long buffer_size,
@@ -64,31 +64,14 @@ static int mono_spectrogram(const void* input_buffer,
     for (size_t i = 0; i < buffer_size; i++)
         data->input[i] = static_cast<double>(input[i]);
 
-    const float rms = std::accumulate(input, input + buffer_size, 0.0,
-                                      [](float aggregate, float current) {
-                                          return aggregate + current * current;
-                                      });
+    const float rms = std::accumulate(
+        input, input + buffer_size, 0.0, [](float aggregate, float current)
+        { return aggregate + current * current; });
     std::cout << '\r';
     render_mono_volume_bar(rms, sensibility);
     std::cout.flush();
 
     return 0;
-}
-
-static void render_mono_volume_bar(float level, float sensibility)
-{
-    constexpr size_t display_length = 100;
-    constexpr float threshold_unit = 1 / static_cast<float>(display_length);
-    float threshold;
-
-    for (size_t i = 0; i < display_length; i++)
-    {
-        threshold = i * threshold_unit;
-        if (level * sensibility >= threshold)
-            std::cout << "█";
-        else
-            std::cout << " ";
-    }
 }
 
 int main(void)

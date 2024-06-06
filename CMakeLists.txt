@@ -9,6 +9,7 @@ add_executable(tspectrogram)
 target_sources(tspectrogram PRIVATE
 	src/main.cpp
 	src/InputStream.cpp
+	src/ui.cpp
 )
 set_target_properties(tspectrogram PROPERTIES COMPILE_FLAGS "-Wall -Wextra -Wpedantic -g3")
 target_include_directories(tspectrogram PUBLIC src)
