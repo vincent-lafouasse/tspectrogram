@@ -4,14 +4,14 @@
 #include <numeric>
 #include <thread>
 
-#include "Stream.h"
+#include "InputStream.h"
 
 constexpr float sensibility = 0.4;
 
-static void render_mono_volume_bar(float level)
+static void render_mono_volume_bar(float level, float sensibility)
 {
-    constexpr float display_length = 100;
-    constexpr float threshold_unit = 1 / display_length;
+    constexpr size_t display_length = 100;
+    constexpr float threshold_unit = 1 / static_cast<float>(display_length);
     float threshold;
 
     for (size_t i = 0; i < display_length; i++)
@@ -43,7 +43,7 @@ static int mono_spectrogram(const void* input_buffer,
                                           return aggregate + current * current;
                                       });
     std::cout << '\r';
-    render_mono_volume_bar(rms);
+    render_mono_volume_bar(rms, sensibility);
     std::cout.flush();
 
     return 0;
@@ -51,7 +51,13 @@ static int mono_spectrogram(const void* input_buffer,
 
 int main(void)
 {
-    Stream stream;
+    constexpr int sample_rate = 48000;
+    constexpr unsigned long buffer_size = 512;
+    constexpr int n_channels = 1;
+
+    constexpr InputStreamConfig cfg = {sample_rate, buffer_size, n_channels};
+
+    InputStream stream(cfg);
     stream.open(mono_spectrogram);
     stream.start();
 

@@ -8,7 +8,7 @@ set(CMAKE_CXX_STANDARD 17)
 add_executable(tspectrogram)
 target_sources(tspectrogram PRIVATE
 	src/main.cpp
-	src/Stream.cpp
+	src/InputStream.cpp
 )
 set_target_properties(tspectrogram PROPERTIES COMPILE_FLAGS "-Wall -Wextra -Wpedantic -g3")
 target_include_directories(tspectrogram PUBLIC src)

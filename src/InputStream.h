@@ -2,18 +2,20 @@
 
 #include <portaudio.h>
 
-struct StreamConfig
+struct InputStreamConfig
 {
-    static StreamConfig default_config();
+    static InputStreamConfig default_config();
     int sample_rate;
     unsigned long buffer_size;
+    int n_channels;
 };
 
-class Stream
+class InputStream
 {
    public:
-    Stream();
-    ~Stream();
+    InputStream();
+    InputStream(InputStreamConfig stream_config);
+    ~InputStream();
     void start();
     void stop();
 
@@ -24,17 +26,12 @@ class Stream
                               PaStreamCallbackFlags status_flags,
                               void* user_data));
 
-    StreamConfig cfg;
+    InputStreamConfig cfg;
 
    private:
     void query_input_device();
-    void query_output_device();
     void setup_params();
-    int n_input_channels = 1;
-    int n_output_channels = 2;
     int input_device;
-    int output_device;
     PaStreamParameters input_params;
-    PaStreamParameters output_params;
     PaStream* pa_stream;
 };
