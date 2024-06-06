@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <chrono>
 #include <cstdlib>
 #include <iostream>
@@ -8,12 +9,13 @@
 #include "fftw3.h"
 #include "ui.h"
 
-constexpr float sensibility = 0.4;
 constexpr int sample_rate = 48000;
 constexpr unsigned long buffer_size = 512;
 constexpr int n_channels = 1;
-[[maybe_unused]] constexpr float min_frequency = 20.0;
-[[maybe_unused]] constexpr float max_frequency = 20000.0;
+
+constexpr float min_frequency = 20.0;
+constexpr float max_frequency = 20000.0;
+constexpr float sensibility = 0.4;
 
 // Data for a 1d real to real fft (r2r_1d), both buffers are doubles
 struct FFTData
@@ -23,8 +25,8 @@ struct FFTData
     double* input;
     double* output;
     fftw_plan plan;
-    int start_index;
-    int size;
+    int start_index;  // represents 20 Hz, ie ignore information below 20 Hz
+    int end_index;    // represents 20 kHz
 };
 
 FFTData::FFTData()
@@ -35,6 +37,13 @@ FFTData::FFTData()
     constexpr unsigned int plan_flags = FFTW_ESTIMATE;
     constexpr fftw_r2r_kind kind = FFTW_HC2R;
     plan = fftw_plan_r2r_1d(buffer_size, input, output, kind, plan_flags);
+
+    constexpr double sample_ratio =
+        buffer_size / static_cast<double>(sample_rate);
+    start_index = std::ceil(min_frequency * sample_ratio);
+    end_index =
+        std::min(static_cast<int>(buffer_size),
+                 static_cast<int>(std::ceil(max_frequency * sample_ratio)));
 }
 
 FFTData::~FFTData()
