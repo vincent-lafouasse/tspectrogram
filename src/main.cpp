@@ -45,16 +45,15 @@ FFTData::~FFTData()
 }
 
 static int mono_spectrogram(const void* input_buffer,
-                            void* output_buffer,
+                            void* _output_buffer,
                             unsigned long buffer_size,
-                            const PaStreamCallbackTimeInfo* time_info,
-                            PaStreamCallbackFlags status_flags,
+                            const PaStreamCallbackTimeInfo* _time_info,
+                            PaStreamCallbackFlags _status_flags,
                             void* user_data)
 {
-    (void)output_buffer;
-    (void)time_info;
-    (void)status_flags;
-    (void)user_data;
+    (void)_output_buffer;
+    (void)_time_info;
+    (void)_status_flags;
 
     const float* input = static_cast<const float*>(input_buffer);
     FFTData* data = static_cast<FFTData*>(user_data);
