@@ -7,7 +7,6 @@
 
 #include "InputStream.h"
 #include "fftw3.h"
-#include "ui.h"
 
 constexpr int sample_rate = 48000;
 constexpr unsigned long buffer_size = 512;
@@ -17,7 +16,7 @@ constexpr float min_frequency = 20.0;
 constexpr float max_frequency = 20000.0;
 constexpr float sensibility = 0.4;
 
-// Data for a 1d real to real fft (r2r_1d), both buffers are doubles
+// Data for a 1d real to real fft (r2r_1d) hence two double buffers
 struct FFTData
 {
     FFTData();
