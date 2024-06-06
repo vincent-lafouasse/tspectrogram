@@ -74,8 +74,33 @@ static int mono_spectrogram(const void* input_buffer,
 
     std::cout << '\r';
     constexpr size_t line_length = 100;
+    double log_index;
+    double amplitude;
     for (size_t i = 0; i < line_length; i++)
     {
+        log_index = std::pow(i / static_cast<float>(line_length), 4);
+        amplitude = data->output[static_cast<size_t>(
+            data->start_index + log_index * data->spectrogram_size
+        )];
+        amplitude *= sensibility;
+
+        if (amplitude < 0.125) {
+            std::cout << "▁";
+        } else if (amplitude < 0.25) {
+            std::cout << "▂";
+        } else if (amplitude < 0.375) {
+            std::cout << "▃";
+        } else if (amplitude < 0.5) {
+            std::cout << "▄";
+        } else if (amplitude < 0.625) {
+            std::cout << "▅";
+        } else if (amplitude < 0.75) {
+            std::cout << "▆";
+        } else if (amplitude < 0.875) {
+            std::cout << "▇";
+        } else {
+            std::cout << "█";
+        }
     }
 
     std::cout.flush();
