@@ -14,10 +14,19 @@ set_target_properties(tspectrogram PROPERTIES COMPILE_FLAGS "-Wall -Wextra -Wped
 target_include_directories(tspectrogram PUBLIC src)
 
 include(cmake/CPM.cmake)
+
 CPMAddPackage(
     NAME portaudio
     GITHUB_REPOSITORY PortAudio/portaudio
     VERSION 19.7.0
 )
-
+target_include_directories(tspectrogram PUBLIC ${portaudio_SOURCE_DIR}/include)
 target_link_libraries(tspectrogram portaudio)
+
+CPMAddPackage(
+    NAME fftw3
+    URL "http://fftw.org/fftw-3.3.10.tar.gz"
+    VERSION 3.3.10
+)
+target_include_directories(tspectrogram PUBLIC ${fftw3_SOURCE_DIR}/api)
+target_link_libraries(tspectrogram fftw3)
