@@ -21,8 +21,8 @@ struct FFTData
 {
     FFTData();
     ~FFTData();
-    double* input;
-    double* output;
+    double* dtft_input;
+    double* dtft_output;
     fftw_plan plan;
     int start_index;  // represents 20 Hz, ie ignore information below 20 Hz
     int spectrogram_size;  // number of frequency buckets to fetch
@@ -30,12 +30,15 @@ struct FFTData
 
 FFTData::FFTData()
 {
-    input = static_cast<double*>(fftw_malloc(buffer_size * sizeof(double)));
-    output = static_cast<double*>(fftw_malloc(buffer_size * sizeof(double)));
+    dtft_input =
+        static_cast<double*>(fftw_malloc(buffer_size * sizeof(double)));
+    dtft_output =
+        static_cast<double*>(fftw_malloc(buffer_size * sizeof(double)));
 
     constexpr unsigned int plan_flags = FFTW_ESTIMATE;
     constexpr fftw_r2r_kind kind = FFTW_HC2R;
-    plan = fftw_plan_r2r_1d(buffer_size, input, output, kind, plan_flags);
+    plan = fftw_plan_r2r_1d(buffer_size, dtft_input, dtft_output, kind,
+                            plan_flags);
 
     constexpr double sample_ratio =
         buffer_size / static_cast<double>(sample_rate);
@@ -48,8 +51,8 @@ FFTData::FFTData()
 
 FFTData::~FFTData()
 {
-    fftw_free(input);
-    fftw_free(output);
+    fftw_free(dtft_input);
+    fftw_free(dtft_output);
     fftw_destroy_plan(plan);
 }
 
@@ -68,8 +71,9 @@ static int mono_spectrogram(const void* input_buffer,
     FFTData* data = static_cast<FFTData*>(user_data);
 
     for (size_t i = 0; i < buffer_size; i++)
-        data->input[i] = static_cast<double>(input[i]);
+        data->dtft_input[i] = static_cast<double>(input[i]);
 
+    // computes dtft and fills dtft_output
     fftw_execute(data->plan);
 
     std::cout << '\r';
@@ -82,7 +86,7 @@ static int mono_spectrogram(const void* input_buffer,
         log_index = std::pow(i / static_cast<float>(line_length), 4);
         index = static_cast<size_t>(data->start_index +
                                     log_index * data->spectrogram_size);
-        amplitude = sensibility * data->output[index];
+        amplitude = sensibility * data->dtft_output[index];
 
         if (amplitude < 0.125)
             std::cout << "▁";
