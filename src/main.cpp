@@ -1,3 +1,4 @@
+#include <array>
 #include <chrono>
 #include <cstdlib>
 #include <iostream>
@@ -5,12 +6,28 @@
 #include <thread>
 
 #include "InputStream.h"
+#include "fftw3.h"
 
 constexpr float sensibility = 0.4;
+constexpr int sample_rate = 48000;
+constexpr unsigned long buffer_size = 512;
+constexpr int n_channels = 1;
 
 struct FFTData
 {
+    FFTData();
+    std::array<double, buffer_size> input;
+    std::array<double, buffer_size> output;
+    fftw_plan plan;
+    int start_index;
+    int size;
 };
+
+FFTData::FFTData()
+{
+    plan = fftw_plan_r2r_1d(buffer_size, input.data(), output.data(), FFTW_HC2R,
+                            FFTW_ESTIMATE);
+}
 
 static void render_mono_volume_bar(float level, float sensibility);
 
@@ -29,9 +46,10 @@ static int mono_spectrogram(const void* input_buffer,
     const float* input = static_cast<const float*>(input_buffer);
     FFTData* data = static_cast<FFTData*>(user_data);
 
-    const float rms = std::accumulate(
-        input, input + buffer_size, 0.0, [](float aggregate, float current)
-        { return aggregate + current * current; });
+    const float rms = std::accumulate(input, input + buffer_size, 0.0,
+                                      [](float aggregate, float current) {
+                                          return aggregate + current * current;
+                                      });
     std::cout << '\r';
     render_mono_volume_bar(rms, sensibility);
     std::cout.flush();
@@ -57,10 +75,6 @@ static void render_mono_volume_bar(float level, float sensibility)
 
 int main(void)
 {
-    constexpr int sample_rate = 48000;
-    constexpr unsigned long buffer_size = 512;
-    constexpr int n_channels = 1;
-
     constexpr InputStreamConfig cfg = {sample_rate, buffer_size, n_channels};
 
     FFTData callback_data;
