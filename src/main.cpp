@@ -26,7 +26,7 @@ struct FFTData
     double* output;
     fftw_plan plan;
     int start_index;  // represents 20 Hz, ie ignore information below 20 Hz
-    int spectrogram_size;         // number of frequency buckets to fetch
+    int spectrogram_size;  // number of frequency buckets to fetch
 };
 
 FFTData::FFTData()
@@ -77,7 +77,6 @@ static int mono_spectrogram(const void* input_buffer,
     constexpr size_t line_length = 100;
     for (size_t i = 0; i < line_length; i++)
     {
-        
     }
 
     std::cout.flush();
