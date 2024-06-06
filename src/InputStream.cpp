@@ -1,4 +1,4 @@
-#include "Stream.h"
+#include "InputStream.h"
 
 #include <cstdlib>
 #include <iostream>

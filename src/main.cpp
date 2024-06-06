@@ -4,7 +4,7 @@
 #include <numeric>
 #include <thread>
 
-#include "Stream.h"
+#include "InputStream.h"
 
 constexpr float sensibility = 0.4;
 
