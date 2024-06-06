@@ -7,6 +7,7 @@ struct InputStreamConfig
     static InputStreamConfig default_config();
     int sample_rate;
     unsigned long buffer_size;
+    int n_channels;
 };
 
 class Stream
