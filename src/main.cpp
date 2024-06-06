@@ -84,37 +84,21 @@ static int mono_spectrogram(const void* input_buffer,
         amplitude *= sensibility;
 
         if (amplitude < 0.125)
-        {
             std::cout << "▁";
-        }
         else if (amplitude < 0.25)
-        {
             std::cout << "▂";
-        }
         else if (amplitude < 0.375)
-        {
             std::cout << "▃";
-        }
         else if (amplitude < 0.5)
-        {
             std::cout << "▄";
-        }
         else if (amplitude < 0.625)
-        {
             std::cout << "▅";
-        }
         else if (amplitude < 0.75)
-        {
             std::cout << "▆";
-        }
         else if (amplitude < 0.875)
-        {
             std::cout << "▇";
-        }
         else
-        {
             std::cout << "█";
-        }
     }
 
     std::cout.flush();
