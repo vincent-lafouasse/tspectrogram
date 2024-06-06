@@ -12,6 +12,8 @@ constexpr float sensibility = 0.4;
 constexpr int sample_rate = 48000;
 constexpr unsigned long buffer_size = 512;
 constexpr int n_channels = 1;
+constexpr float min_frequency = 20.0;
+constexpr float max_frequency = 20000.0;
 
 struct FFTData
 {
