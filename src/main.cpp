@@ -10,8 +10,8 @@ constexpr float sensibility = 0.4;
 
 static void render_mono_volume_bar(float level)
 {
-    constexpr float display_length = 100;
-    constexpr float threshold_unit = 1 / display_length;
+    constexpr size_t display_length = 100;
+    constexpr float threshold_unit = 1 / static_cast<float>(display_length);
     float threshold;
 
     for (size_t i = 0; i < display_length; i++)

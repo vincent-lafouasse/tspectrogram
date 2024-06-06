@@ -19,6 +19,7 @@ int do_nothing_callback(const void* input_buffer,
     (void)status_flags;
     (void)user_data;
     std::cout << 'a';
+    std::cout.flush();
     return 0;
 }
 
