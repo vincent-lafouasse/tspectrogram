@@ -16,6 +16,7 @@ constexpr int n_channels = 1;
 struct FFTData
 {
     FFTData();
+    ~FFTData();
     std::array<double, buffer_size> input;
     std::array<double, buffer_size> output;
     fftw_plan plan;
@@ -27,6 +28,11 @@ FFTData::FFTData()
 {
     plan = fftw_plan_r2r_1d(buffer_size, input.data(), output.data(), FFTW_HC2R,
                             FFTW_ESTIMATE);
+}
+
+FFTData::~FFTData()
+{
+    fftw_destroy_plan(plan);
 }
 
 static void render_mono_volume_bar(float level, float sensibility);
