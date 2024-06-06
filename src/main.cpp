@@ -5,6 +5,7 @@
 #include <thread>
 
 #include "InputStream.h"
+#include "fftw3.h"
 
 constexpr float sensibility = 0.4;
 

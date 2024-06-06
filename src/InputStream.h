@@ -1,6 +1,6 @@
 #pragma once
 
-#include <portaudio.h>
+#include "portaudio.h"
 
 struct InputStreamConfig
 {
