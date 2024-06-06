@@ -75,13 +75,14 @@ static int mono_spectrogram(const void* input_buffer,
     std::cout << '\r';
     constexpr size_t line_length = 100;
     double log_index;
+    size_t index;
     double amplitude;
     for (size_t i = 0; i < line_length; i++)
     {
         log_index = std::pow(i / static_cast<float>(line_length), 4);
-        amplitude = data->output[static_cast<size_t>(
-            data->start_index + log_index * data->spectrogram_size)];
-        amplitude *= sensibility;
+        index = static_cast<size_t>(data->start_index +
+                                    log_index * data->spectrogram_size);
+        amplitude = sensibility * data->output[index];
 
         if (amplitude < 0.125)
             std::cout << "▁";
