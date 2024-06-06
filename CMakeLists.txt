@@ -13,5 +13,11 @@ target_sources(tspectrogram PRIVATE
 set_target_properties(tspectrogram PROPERTIES COMPILE_FLAGS "-Wall -Wextra -Wpedantic -g3")
 target_include_directories(tspectrogram PUBLIC src)
 
-add_subdirectory(lib)
+include(cmake/CPM.cmake)
+CPMAddPackage(
+    NAME portaudio
+    GITHUB_REPOSITORY PortAudio/portaudio
+    VERSION 19.7.0
+)
+
 target_link_libraries(tspectrogram portaudio)
