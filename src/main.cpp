@@ -42,10 +42,10 @@ FFTData::FFTData()
 
     constexpr double sample_ratio =
         buffer_size / static_cast<double>(sample_rate);
-    start_index = std::ceil(min_frequency * sample_ratio);
     const int end_index =
         std::min(static_cast<int>(buffer_size),
                  static_cast<int>(std::ceil(max_frequency * sample_ratio)));
+    start_index = std::ceil(min_frequency * sample_ratio);
     spectrogram_size = end_index - start_index;
 }
 
