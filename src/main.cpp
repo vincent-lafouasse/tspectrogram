@@ -60,7 +60,9 @@ static int mono_spectrogram(const void* input_buffer,
 
     const float* input = static_cast<const float*>(input_buffer);
     FFTData* data = static_cast<FFTData*>(user_data);
-    (void)data;
+
+    for (size_t i = 0; i < buffer_size; i++)
+        data->input[i] = static_cast<double>(input[i]);
 
     const float rms = std::accumulate(input, input + buffer_size, 0.0,
                                       [](float aggregate, float current) {
