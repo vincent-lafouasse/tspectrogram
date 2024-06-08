@@ -45,6 +45,8 @@ FFTData fft_data_init(void)
         min_int(BUFFER_SIZE, ceil(MAX_FREQUENCY * sample_ratio));
     data.start_index = ceil(MIN_FREQUENCY * sample_ratio);
     data.spectrogram_size = end_index - data.start_index;
+
+    return data;
 }
 
 void fft_data_destroy(FFTData* data)
