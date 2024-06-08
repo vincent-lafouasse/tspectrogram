@@ -1,6 +1,7 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 #include "InputStream.h"
 #include "fftw3.h"
@@ -117,8 +118,8 @@ int main(void)
     input_stream_open(&stream, &mono_spectrogram, &callback_data);
     input_stream_start(&stream);
 
-    auto capture_duration = std::chrono::seconds(10);
-    std::this_thread::sleep_for(capture_duration);
+    int capture_duration_secs = 10;
+    sleep(capture_duration_secs);
 
     input_stream_stop(&stream);
 
