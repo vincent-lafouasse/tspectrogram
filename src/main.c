@@ -48,9 +48,9 @@ FFTData fft_data_init(void)
 
 void fft_data_destroy(FFTData* data)
 {
-    fftw_free(data.dtft_input);
-    fftw_free(data.dtft_output);
-    fftw_destroy_plan(data.plan);
+    fftw_free(data->dtft_input);
+    fftw_free(data->dtft_output);
+    fftw_destroy_plan(data->plan);
 }
 
 static int mono_spectrogram(const void* input_buffer,
@@ -64,53 +64,52 @@ static int mono_spectrogram(const void* input_buffer,
     (void)_time_info;
     (void)_status_flags;
 
-    const float* input = static_cast<const float*>(input_buffer);
-    FFTData* data = static_cast<FFTData*>(user_data);
+    const float* input = (const float*)input_buffer;
+    FFTData* data = (FFTData*)user_data;
 
     for (size_t i = 0; i < buffer_size; i++)
-        data->dtft_input[i] = static_cast<double>(input[i]);
+        data->dtft_input[i] = input[i];
 
     // computes dtft and fills dtft_output
     fftw_execute(data->plan);
 
-    std::cout << '\r';
-    constexpr size_t line_length = 100;
+    printf("\r");
+    const size_t line_length = 100;
     double log_index;
     size_t index;
     double amplitude;
     for (size_t i = 0; i < line_length; i++)
     {
-        log_index = std::pow(i / static_cast<float>(line_length), 4);
-        index = static_cast<size_t>(data->start_index +
+        log_index = pow(i / (double)line_length, 4);
+        index = (size_t)(data->start_index +
                                     log_index * data->spectrogram_size);
-        amplitude = sensibility * data->dtft_output[index];
+        amplitude = SENSIBILITY * data->dtft_output[index];
 
         if (amplitude < 0.125)
-            std::cout << "▁";
+            printf("▁");
         else if (amplitude < 0.25)
-            std::cout << "▂";
+            printf("▂");
         else if (amplitude < 0.375)
-            std::cout << "▃";
+            printf("▃");
         else if (amplitude < 0.5)
-            std::cout << "▄";
+            printf("▄");
         else if (amplitude < 0.625)
-            std::cout << "▅";
+            printf("▅");
         else if (amplitude < 0.75)
-            std::cout << "▆";
+            printf("▆");
         else if (amplitude < 0.875)
-            std::cout << "▇";
+            printf("▇");
         else
-            std::cout << "█";
+            printf("█");
     }
-
-    std::cout.flush();
+    fflush(stdout);
 
     return 0;
 }
 
 int main(void)
 {
-    constexpr InputStreamConfig cfg = {sample_rate, buffer_size, n_channels};
+    const InputStreamConfig cfg = {SAMPLE_RATE, BUFFER_SIZE, N_CHANNELS};
 
     FFTData callback_data;
 
