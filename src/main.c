@@ -1,6 +1,6 @@
-#include <stdlib.h>
 #include <math.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "InputStream.h"
 #include "fftw3.h"
@@ -36,8 +36,8 @@ FFTData fft_data_init(void)
 
     const unsigned int plan_flags = FFTW_ESTIMATE;
     const fftw_r2r_kind kind = FFTW_HC2R;
-    data.plan = fftw_plan_r2r_1d(BUFFER_SIZE, data.dtft_input, data.dtft_output, kind,
-                            plan_flags);
+    data.plan = fftw_plan_r2r_1d(BUFFER_SIZE, data.dtft_input, data.dtft_output,
+                                 kind, plan_flags);
 
     const double sample_ratio = BUFFER_SIZE / SAMPLE_RATE;
     const int end_index =
@@ -81,8 +81,8 @@ static int mono_spectrogram(const void* input_buffer,
     for (size_t i = 0; i < line_length; i++)
     {
         log_index = pow(i / (double)line_length, 4);
-        index = (size_t)(data->start_index +
-                                    log_index * data->spectrogram_size);
+        index =
+            (size_t)(data->start_index + log_index * data->spectrogram_size);
         amplitude = SENSIBILITY * data->dtft_output[index];
 
         if (amplitude < 0.125)
@@ -111,16 +111,19 @@ int main(void)
 {
     const InputStreamConfig cfg = {SAMPLE_RATE, BUFFER_SIZE, N_CHANNELS};
 
-    FFTData callback_data;
+    FFTData callback_data = fft_data_init();
 
-    InputStream stream(cfg);
-    stream.open(mono_spectrogram, &callback_data);
-    stream.start();
+    InputStream stream = input_stream_init(cfg);
+    input_stream_open(&stream, &mono_spectrogram, &callback_data);
+    input_stream_start(&stream);
 
     auto capture_duration = std::chrono::seconds(10);
     std::this_thread::sleep_for(capture_duration);
 
-    stream.stop();
+    input_stream_stop(&stream);
+
+    fft_data_destroy(&callback_data);
+    input_stream_destroy(&stream);
 
     return EXIT_SUCCESS;
 }
