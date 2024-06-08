@@ -113,10 +113,9 @@ static int mono_spectrogram(const void* input_buffer,
 int main(void)
 {
     const InputStreamConfig cfg = {SAMPLE_RATE, BUFFER_SIZE, N_CHANNELS};
+    InputStream stream = input_stream_init(cfg);
 
     FFTData callback_data = fft_data_init();
-
-    InputStream stream = input_stream_init(cfg);
     input_stream_open(&stream, &mono_spectrogram, &callback_data);
     input_stream_start(&stream);
 
@@ -127,6 +126,5 @@ int main(void)
 
     fft_data_destroy(&callback_data);
     input_stream_destroy(&stream);
-
     return EXIT_SUCCESS;
 }
