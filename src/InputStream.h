@@ -9,8 +9,6 @@ typedef struct
     int n_channels;
 } InputStreamConfig;
 
-InputStreamConfig default_config(void);
-
 typedef struct
 {
     InputStreamConfig cfg;
@@ -26,6 +24,7 @@ void input_stream_start(InputStream* stream);
 void input_stream_stop(InputStream* stream);
 
 void input_stream_open(
+    InputStream* stream,
     int (*callback)(const void* input_buffer,
                     void* output_buffer,
                     unsigned long buffer_size,
