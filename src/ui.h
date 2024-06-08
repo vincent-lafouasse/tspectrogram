@@ -1,7 +1,7 @@
 #pragma once
 
-#include <cstddef>
+#include <stddef.h>
 
-[[maybe_unused]] void render_mono_volume_bar(float volume,
-                                             float sensibility,
-                                             size_t line_length);
+void render_mono_volume_bar(float volume,
+                            float sensibility,
+                            size_t line_length);

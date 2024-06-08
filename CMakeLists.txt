@@ -3,13 +3,15 @@ cmake_minimum_required(VERSION 3.5)
 project(tspectrogram)
 set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_C_STANDARD 99)
 
 add_executable(tspectrogram)
 target_sources(tspectrogram PRIVATE
-	src/main.cpp
-	src/InputStream.cpp
-	src/ui.cpp
+	src/main.c
+	src/InputStream.c
+	src/InputStream.h
+	src/ui.c
+	src/ui.h
 )
 set_target_properties(tspectrogram PROPERTIES COMPILE_FLAGS "-Wall -Wextra -Wpedantic -g3")
 target_include_directories(tspectrogram PUBLIC src)
